@@ -1,13 +1,13 @@
 name: fire_crud_flutter
 description: "Purpose built collection widgets for easily displaying your data via fire_crud"
-version: 1.0.0
+version: 1.0.1
 repository: https://github.com/ArcaneArts/fire_crud_flutter
 environment:
   sdk: '>=3.4.3 <4.0.0'
   flutter: ">=1.17.0"
 dependencies:
   fire_api: ">=1.1.5 <1.2.0"
-  fire_crud: ">=2.0.4 <3.0.0"
+  fire_crud: any
   toxic_flutter: ">=1.0.1 <1.4.0"
   flutter:
     sdk: flutter
