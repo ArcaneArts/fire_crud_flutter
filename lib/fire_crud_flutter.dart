@@ -89,6 +89,7 @@ extension XModelAccessor on ModelAccessor {
       build<T>(
           id,
           (v) => Pylon<T>(
+                key: ValueKey("p.${v.documentPath}.pylon"),
                 value: v,
                 builder: builder,
               ),
@@ -102,6 +103,7 @@ extension XModelAccessor on ModelAccessor {
           {Widget? loading}) =>
       buildUnique<T>(
           (v) => Pylon<T>(
+                key: ValueKey("pu.${v.documentPath}.pylon"),
                 value: v,
                 builder: builder,
               ),
@@ -116,6 +118,7 @@ extension XModelAccessor on ModelAccessor {
       buildStream<T>(
           id,
           (v) => Pylon<T>(
+                key: ValueKey("ps.${v.documentPath}.pylon"),
                 value: v,
                 builder: builder,
               ),
@@ -129,6 +132,7 @@ extension XModelAccessor on ModelAccessor {
           {Widget? loading}) =>
       buildStreamUnique<T>(
           (v) => Pylon<T>(
+                key: ValueKey("psu.${v.documentPath}.pylon"),
                 value: v,
                 builder: builder,
               ),
@@ -142,6 +146,7 @@ extension XModelAccessor on ModelAccessor {
           {Widget? loading}) =>
       buildSelfStream<T>(
           (v) => Pylon<T>(
+                key: ValueKey("pss.${v.documentPath}.pylon"),
                 value: v,
                 builder: builder,
               ),
