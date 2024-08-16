@@ -1,3 +1,7 @@
+## 1.2.0
+
+* Shimmer me timbers with skeletonizer!
+
 ## 1.1.0
 
 * Initial Support for pylon 3

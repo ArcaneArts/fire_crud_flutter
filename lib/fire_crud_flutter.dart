@@ -8,6 +8,7 @@ import 'package:fire_crud_flutter/src/fire_grid.dart';
 import 'package:fire_crud_flutter/src/fire_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:pylon/pylon.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:throttled/throttled.dart';
 import 'package:toxic_flutter/extensions/future.dart';
 import 'package:toxic_flutter/extensions/stream.dart';
@@ -15,6 +16,11 @@ import 'package:toxic_flutter/extensions/stream.dart';
 export 'package:fire_crud_flutter/src/fire_grid.dart';
 export 'package:fire_crud_flutter/src/fire_list.dart';
 // todo fire_page_view
+
+bool fireCrudShimmers = false;
+
+Widget _shimmer(Widget w) =>
+    fireCrudShimmers ? Skeletonizer(child: w) : const SizedBox.shrink();
 
 class ModelEditor<T extends ModelCrud> extends StatefulWidget {
   final bool unique;
@@ -97,10 +103,15 @@ extension XModelAccessor on ModelAccessor {
                 value: v,
                 builder: builder,
               ),
-          loading: Pylon<T?>(
-            value: null,
-            builder: (context) => loading ?? const SizedBox.shrink(),
-          ));
+          loading: fireCrudShimmers
+              ? Pylon<T>(
+                  value: model<T>().fakeData as T,
+                  builder: builder,
+                )
+              : Pylon<T?>(
+                  value: null,
+                  builder: (context) => loading ?? const SizedBox.shrink(),
+                ));
 
   Widget pylonUnique<T extends ModelCrud>(
           BuildContext context, Widget Function(BuildContext context) builder,
@@ -111,10 +122,15 @@ extension XModelAccessor on ModelAccessor {
                 value: v,
                 builder: builder,
               ),
-          loading: Pylon<T?>(
-            value: null,
-            builder: (context) => loading ?? const SizedBox.shrink(),
-          ));
+          loading: fireCrudShimmers
+              ? Pylon<T>(
+                  value: model<T>().fakeData as T,
+                  builder: builder,
+                )
+              : Pylon<T?>(
+                  value: null,
+                  builder: (context) => loading ?? const SizedBox.shrink(),
+                ));
 
   Widget pylonStream<T extends ModelCrud>(BuildContext context, String id,
           Widget Function(BuildContext context) builder,
@@ -126,10 +142,15 @@ extension XModelAccessor on ModelAccessor {
                 value: v,
                 builder: builder,
               ),
-          loading: Pylon<T?>(
-            value: null,
-            builder: (context) => loading ?? const SizedBox.shrink(),
-          ));
+          loading: fireCrudShimmers
+              ? Pylon<T>(
+                  value: model<T>().fakeData as T,
+                  builder: builder,
+                )
+              : Pylon<T?>(
+                  value: null,
+                  builder: (context) => loading ?? const SizedBox.shrink(),
+                ));
 
   Widget pylonStreamUnique<T extends ModelCrud>(
           BuildContext context, Widget Function(BuildContext context) builder,
@@ -140,10 +161,15 @@ extension XModelAccessor on ModelAccessor {
                 value: v,
                 builder: builder,
               ),
-          loading: Pylon<T?>(
-            value: null,
-            builder: (context) => loading ?? const SizedBox.shrink(),
-          ));
+          loading: fireCrudShimmers
+              ? Pylon<T>(
+                  value: model<T>().fakeData as T,
+                  builder: builder,
+                )
+              : Pylon<T?>(
+                  value: null,
+                  builder: (context) => loading ?? const SizedBox.shrink(),
+                ));
 
   Widget pylonStreamSelf<T extends ModelCrud>(
           BuildContext context, Widget Function(BuildContext context) builder,
@@ -154,10 +180,15 @@ extension XModelAccessor on ModelAccessor {
                 value: v,
                 builder: builder,
               ),
-          loading: Pylon<T?>(
-            value: null,
-            builder: (context) => loading ?? const SizedBox.shrink(),
-          ));
+          loading: fireCrudShimmers
+              ? Pylon<T>(
+                  value: (this as ModelCrud).fakeData as T,
+                  builder: builder,
+                )
+              : Pylon<T?>(
+                  value: null,
+                  builder: (context) => loading ?? const SizedBox.shrink(),
+                ));
 
   Widget pylonList<T extends ModelCrud>(
           {required BuildContext context,
@@ -191,36 +222,42 @@ extension XModelAccessor on ModelAccessor {
           {Widget? loading}) =>
       FutureOnce<T?>(
           futureFactory: () => get<T>(id),
-          builder: (t) =>
-              t != null ? builder(t) : loading ?? const SizedBox.shrink());
+          builder: (t) => t != null
+              ? builder(t)
+              : loading ?? _shimmer(builder(model<T>().fakeData as T)));
 
   Widget buildStream<T extends ModelCrud>(
           String id, Widget Function(T t) builder, {Widget? loading}) =>
       StreamOnce<T?>(
           streamFactory: () => stream<T>(id),
-          builder: (t) =>
-              t != null ? builder(t) : loading ?? const SizedBox.shrink());
+          builder: (t) => t != null
+              ? builder(t)
+              : loading ?? _shimmer(builder(model<T>().fakeData as T)));
 
   Widget buildUnique<T extends ModelCrud>(Widget Function(T t) builder,
           {Widget? loading}) =>
       FutureOnce<T?>(
           futureFactory: () => getUnique<T>(),
-          builder: (t) =>
-              t != null ? builder(t) : loading ?? const SizedBox.shrink());
+          builder: (t) => t != null
+              ? builder(t)
+              : loading ?? _shimmer(builder(model<T>().fakeData as T)));
 
   Widget buildStreamUnique<T extends ModelCrud>(Widget Function(T t) builder,
           {Widget? loading}) =>
       StreamOnce<T?>(
           streamFactory: () => streamUnique<T>(),
-          builder: (t) =>
-              t != null ? builder(t) : loading ?? const SizedBox.shrink());
+          builder: (t) => t != null
+              ? builder(t)
+              : loading ?? _shimmer(builder(model<T>().fakeData as T)));
 
   Widget buildSelfStream<T extends ModelCrud>(Widget Function(T t) builder,
           {Widget? loading}) =>
       StreamOnce<T?>(
           streamFactory: () => streamSelf<T>(),
-          builder: (t) =>
-              t != null ? builder(t) : loading ?? const SizedBox.shrink());
+          builder: (t) => t != null
+              ? builder(t)
+              : loading ??
+                  _shimmer(builder((this as ModelCrud).fakeData as T)));
 
   /// Shorthand listview for a collection of models. If you need to control the list properties like shrinkwrap
   /// then actually use [FireList] implementation which needs a collection view. Call .view<Type> instead of .listView<Type> for that.
