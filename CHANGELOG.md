@@ -1,3 +1,7 @@
+## 1.1.0
+
+* Initial Support for pylon 3
+
 ## 1.0.1
 
 * Initial Support for pylon 2
