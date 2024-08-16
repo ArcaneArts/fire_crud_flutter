@@ -83,6 +83,10 @@ extension XModelAccessor on ModelAccessor {
       get<T>(id).then((v) => v ?? model<T>(id)).build(
           (v) => ModelEditor<T>(parent: this, model: v, builder: builder));
 
+  Widget restreamPylon<T extends ModelCrud>(
+          BuildContext context, PylonBuilder builder) =>
+      pylonStreamSelf<T>(context, builder);
+
   Widget pylon<T extends ModelCrud>(BuildContext context, String id,
           Widget Function(BuildContext context) builder,
           {Widget? loading}) =>
