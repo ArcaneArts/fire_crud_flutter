@@ -1,3 +1,6 @@
+# 1.2.3
+* Data Views & Data Lists which rely on pylon & implicit model access
+
 ## 1.2.0
 
 * Shimmer me timbers with skeletonizer!
