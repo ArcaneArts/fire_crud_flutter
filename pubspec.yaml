@@ -1,6 +1,6 @@
 name: fire_crud_flutter
 description: "Purpose built collection widgets for easily displaying your data via fire_crud"
-version: 1.2.6+2
+version: 1.2.6+3
 repository: https://github.com/ArcaneArts/fire_crud_flutter
 environment:
   sdk: '>=3.4.3 <4.0.0'

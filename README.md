@@ -66,6 +66,8 @@ class NoteScreen extends StatelessWidget{
   
   // You dont need the model view unless you need to live stream this note
   // Otherwise you can still access the list entry from the previous screen unchanged
+  // Note: We arent defining an id here because its obvious. We're telling ModelView to
+  // implicitly find the note model from the context then re-stream it to get updates.
   Widget build(BuildContext context) => ModelView<Note>(
     builder: (context) => Scaffold(
       appBar: AppBar(title: Text(context.note.title)),
