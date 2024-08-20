@@ -12,9 +12,12 @@ import 'package:throttled/throttled.dart';
 import 'package:toxic_flutter/extensions/future.dart';
 import 'package:toxic_flutter/extensions/stream.dart';
 
+export 'package:fire_crud_flutter/src/data/model_grid.dart';
+export 'package:fire_crud_flutter/src/data/model_list.dart';
+export 'package:fire_crud_flutter/src/data/model_span.dart';
+export 'package:fire_crud_flutter/src/data/model_view.dart';
 export 'package:fire_crud_flutter/src/fire_grid.dart';
 export 'package:fire_crud_flutter/src/fire_list.dart';
-// todo fire_page_view
 
 class ModelEditor<T extends ModelCrud> extends StatefulWidget {
   final bool unique;

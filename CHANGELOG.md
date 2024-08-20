@@ -1,3 +1,14 @@
+# 1.2.6
+* BREAKING: Rename Data(List|Grid|Wrap|Column|Row|View) to Model(List|Grid|Wrap|Column|Row|View) to avoid material class name conflicts.
+
+# 1.2.5
+* Lots of fixes for new data api
+* Added DataList (and DataSliverList)
+* Added DataGrid (and DataSliverGrid)
+* Added DataRow and DataColumn
+* Added DataWrap
+* Added DataView
+
 # 1.2.3
 * Data Views & Data Lists which rely on pylon & implicit model access
 
