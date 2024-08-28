@@ -120,11 +120,11 @@ class ModelSliverGrid<T extends ModelCrud> extends StatelessWidget {
       {super.key,
       this.gridDelegate = const SliverGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 300),
-      this.filtered = const SizedBox.shrink(),
+      this.filtered = const SliverToBoxAdapter(child: SizedBox.shrink()),
       this.filter,
       this.query,
       required this.builder,
-      this.empty = const SizedBox.shrink(),
+      this.empty = const SliverToBoxAdapter(child: SizedBox.shrink()),
       this.addAutomaticKeepAlives = true,
       this.addRepaintBoundaries = true,
       this.addSemanticIndexes = true,
@@ -133,8 +133,8 @@ class ModelSliverGrid<T extends ModelCrud> extends StatelessWidget {
       this.semanticIndexOffset = 0,
       this.semanticIndexCallback = _kDefaultSemanticIndexCallback,
       this.onViewerInit,
-      this.loading = const ListTile(),
-      this.failed = const SizedBox.shrink()});
+      this.loading = const SizedBox.shrink(),
+      this.failed = const SliverToBoxAdapter(child: SizedBox.shrink())});
 
   @override
   Widget build(BuildContext context) => FireSliverGrid<T>(

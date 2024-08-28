@@ -142,11 +142,11 @@ class FireSliverList<T extends ModelCrud> extends StatefulWidget {
 
   const FireSliverList(
       {super.key,
-      this.filtered = const SizedBox.shrink(),
+      this.filtered = const SliverToBoxAdapter(child: SizedBox.shrink()),
       this.filter,
       required this.viewerBuilder,
       required this.builder,
-      this.empty = const SizedBox.shrink(),
+      this.empty = const SliverToBoxAdapter(child: SizedBox.shrink()),
       this.addAutomaticKeepAlives = true,
       this.addRepaintBoundaries = true,
       this.addSemanticIndexes = true,
@@ -156,7 +156,7 @@ class FireSliverList<T extends ModelCrud> extends StatefulWidget {
       this.semanticIndexCallback = _kDefaultSemanticIndexCallback,
       this.onViewerInit,
       this.loading = const ListTile(),
-      this.failed = const SizedBox.shrink()});
+      this.failed = const SliverToBoxAdapter(child: SizedBox.shrink())});
 
   @override
   State<FireSliverList<T>> createState() => _FireSliverListState();
@@ -180,24 +180,27 @@ class _FireSliverListState<T extends ModelCrud>
   }
 
   @override
-  Widget build(BuildContext context) =>
-      viewer.stream.build((viewer) => viewer.getSize().build((size) => size == 0
-          ? widget.empty
-          : SliverList(
-              delegate: SliverChildBuilderDelegate(
-              (context, index) => viewer.getAt(index).build(
-                  (item) => item == null
-                      ? widget.failed
-                      : (widget.filter?.call(item) ?? true)
-                          ? widget.builder(context, item)
-                          : widget.filtered,
-                  loading: widget.loading),
-              childCount: size,
-              addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-              addRepaintBoundaries: widget.addRepaintBoundaries,
-              addSemanticIndexes: widget.addSemanticIndexes,
-              findChildIndexCallback: widget.findChildIndexCallback,
-              semanticIndexCallback: widget.semanticIndexCallback,
-              semanticIndexOffset: widget.semanticIndexOffset,
-            ))));
+  Widget build(BuildContext context) => viewer.stream.build(
+      (viewer) => viewer.getSize().build(
+          (size) => size == 0
+              ? widget.empty
+              : SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                  (context, index) => viewer.getAt(index).build(
+                      (item) => item == null
+                          ? widget.failed
+                          : (widget.filter?.call(item) ?? true)
+                              ? widget.builder(context, item)
+                              : widget.filtered,
+                      loading: widget.loading),
+                  childCount: size,
+                  addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+                  addRepaintBoundaries: widget.addRepaintBoundaries,
+                  addSemanticIndexes: widget.addSemanticIndexes,
+                  findChildIndexCallback: widget.findChildIndexCallback,
+                  semanticIndexCallback: widget.semanticIndexCallback,
+                  semanticIndexOffset: widget.semanticIndexOffset,
+                )),
+          loading: widget.loading),
+      loading: widget.loading);
 }

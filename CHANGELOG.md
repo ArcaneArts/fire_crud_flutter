@@ -1,3 +1,6 @@
+# 1.2.7
+* Sliver Fixes
+
 # 1.2.6
 * BREAKING: Rename Data(List|Grid|Wrap|Column|Row|View) to Model(List|Grid|Wrap|Column|Row|View) to avoid material class name conflicts.
 
