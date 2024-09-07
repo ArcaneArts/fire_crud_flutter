@@ -1,3 +1,6 @@
+# 1.2.8
+* More Sliver Fixes
+
 # 1.2.7
 * Sliver Fixes
 

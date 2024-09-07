@@ -157,10 +157,7 @@ extension XModelAccessor on ModelAccessor {
                 value: v,
                 builder: builder,
               ),
-          loading: Pylon<T?>(
-            value: null,
-            builder: (context) => loading ?? const SizedBox.shrink(),
-          ));
+          loading: loading ?? const SizedBox.shrink());
 
   Widget pylonList<T extends ModelCrud>(
           {required BuildContext context,
@@ -200,6 +197,7 @@ extension XModelAccessor on ModelAccessor {
           String id, Widget Function(T t) builder,
           {Widget loading = const SizedBox.shrink()}) =>
       StreamOnce<T?>(
+          loading: loading,
           streamFactory: () => stream<T>(id),
           builder: (t) => t != null ? builder(t) : loading);
 
@@ -212,12 +210,14 @@ extension XModelAccessor on ModelAccessor {
   Widget buildStreamUnique<T extends ModelCrud>(Widget Function(T t) builder,
           {Widget loading = const SizedBox.shrink()}) =>
       StreamOnce<T?>(
+          loading: loading,
           streamFactory: () => streamUnique<T>(),
           builder: (t) => t != null ? builder(t) : loading);
 
   Widget buildSelfStream<T extends ModelCrud>(Widget Function(T t) builder,
           {Widget loading = const SizedBox.shrink()}) =>
       StreamOnce<T?>(
+          loading: loading,
           streamFactory: () => streamSelf<T>(),
           builder: (t) => t != null ? builder(t) : loading);
 
