@@ -134,6 +134,23 @@ extension XModelAccessor on ModelAccessor {
             builder: (context) => loading ?? const SizedBox.shrink(),
           ));
 
+  Widget pylonMutableStream<T extends ModelCrud>(BuildContext context,
+          String id, Widget Function(BuildContext context) builder,
+          {Widget? loading, bool rebuildChildren = true}) =>
+      buildStream<T>(
+          id,
+          (v) => MutablePylon<T>(
+                rebuildChildren: rebuildChildren,
+                key: ValueKey("ps.${v.documentPath}.pylon"),
+                value: v,
+                builder: builder,
+              ),
+          loading: MutablePylon<T?>(
+            rebuildChildren: rebuildChildren,
+            value: null,
+            builder: (context) => loading ?? const SizedBox.shrink(),
+          ));
+
   Widget pylonStreamUnique<T extends ModelCrud>(
           BuildContext context, Widget Function(BuildContext context) builder,
           {Widget? loading}) =>
@@ -148,6 +165,22 @@ extension XModelAccessor on ModelAccessor {
             builder: (context) => loading ?? const SizedBox.shrink(),
           ));
 
+  Widget pylonMutableStreamUnique<T extends ModelCrud>(
+          BuildContext context, Widget Function(BuildContext context) builder,
+          {Widget? loading, bool rebuildChildren = true}) =>
+      buildStreamUnique<T>(
+          (v) => MutablePylon<T>(
+                key: ValueKey("psu.${v.documentPath}.pylon"),
+                value: v,
+                rebuildChildren: rebuildChildren,
+                builder: builder,
+              ),
+          loading: MutablePylon<T?>(
+            value: null,
+            rebuildChildren: rebuildChildren,
+            builder: (context) => loading ?? const SizedBox.shrink(),
+          ));
+
   Widget pylonStreamSelf<T extends ModelCrud>(
           BuildContext context, Widget Function(BuildContext context) builder,
           {Widget? loading}) =>
@@ -155,6 +188,18 @@ extension XModelAccessor on ModelAccessor {
           (v) => Pylon<T>(
                 key: ValueKey("pss.${v.documentPath}.pylon"),
                 value: v,
+                builder: builder,
+              ),
+          loading: loading ?? const SizedBox.shrink());
+
+  Widget pylonMutableStreamSelf<T extends ModelCrud>(
+          BuildContext context, Widget Function(BuildContext context) builder,
+          {Widget? loading, bool rebuildChildren = true}) =>
+      buildSelfStream<T>(
+          (v) => MutablePylon<T>(
+                key: ValueKey("pss.${v.documentPath}.pylon"),
+                value: v,
+                rebuildChildren: rebuildChildren,
                 builder: builder,
               ),
           loading: loading ?? const SizedBox.shrink());

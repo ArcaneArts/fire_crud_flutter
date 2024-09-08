@@ -1,3 +1,6 @@
+# 1.2.9
+* Pylon Streams with mutable pylons
+
 # 1.2.8
 * More Sliver Fixes
 
