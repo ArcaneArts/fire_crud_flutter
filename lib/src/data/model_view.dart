@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:fire_api/fire_api.dart';
 import 'package:fire_crud/fire_crud.dart';
-import 'package:fire_crud_flutter/fire_crud_flutter.dart';
+import 'package:fire_crud_flutter/src/x_context.dart';
 import 'package:flutter/material.dart';
 import 'package:pylon/pylon.dart';
 
