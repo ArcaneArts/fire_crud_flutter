@@ -2,6 +2,7 @@ import 'package:fire_crud/fire_crud.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:pylon/pylon.dart';
 import 'package:toxic_flutter/extensions/future.dart';
 import 'package:toxic_flutter/extensions/stream.dart';
 
@@ -34,9 +35,13 @@ class FireList<T extends ModelCrud> extends StatefulWidget {
   final ScrollViewKeyboardDismissBehavior keyboardDismissBehavior;
   final Widget filtered;
   final bool Function(T item)? filter;
+  final int absoluteListThreshold;
+  final PylonBuilder? absoluteBuilder;
 
   const FireList(
       {super.key,
+      this.absoluteListThreshold = 32,
+      this.absoluteBuilder,
       this.filtered = const SizedBox.shrink(),
       this.filter,
       required this.viewerBuilder,
@@ -90,35 +95,38 @@ class _FireListState<T extends ModelCrud> extends State<FireList<T>> {
   Widget build(BuildContext context) =>
       viewer.stream.build((viewer) => viewer.getSize().build((size) => size == 0
           ? widget.empty
-          : ListView.builder(
-              controller: widget.controller,
-              padding: widget.padding,
-              reverse: widget.reverse,
-              addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-              addRepaintBoundaries: widget.addRepaintBoundaries,
-              addSemanticIndexes: widget.addSemanticIndexes,
-              cacheExtent: widget.cacheExtent,
-              clipBehavior: widget.clipBehavior,
-              dragStartBehavior: widget.dragStartBehavior,
-              findChildIndexCallback: widget.findChildIndexCallback,
-              itemExtent: widget.itemExtent,
-              itemExtentBuilder: widget.itemExtentBuilder,
-              keyboardDismissBehavior: widget.keyboardDismissBehavior,
-              physics: widget.physics,
-              primary: widget.primary,
-              prototypeItem: widget.prototypeItem,
-              restorationId: widget.restorationId,
-              scrollDirection: widget.scrollDirection,
-              semanticChildCount: widget.semanticChildCount,
-              shrinkWrap: widget.shrinkWrap,
-              itemCount: size,
-              itemBuilder: (context, index) => viewer.getAt(index).build(
-                  (item) => item == null
-                      ? widget.failed
-                      : (widget.filter?.call(item) ?? true)
-                          ? widget.builder(context, item)
-                          : widget.filtered,
-                  loading: widget.loading))));
+          : size <= widget.absoluteListThreshold &&
+                  widget.absoluteBuilder != null
+              ? widget.absoluteBuilder!(context)
+              : ListView.builder(
+                  controller: widget.controller,
+                  padding: widget.padding,
+                  reverse: widget.reverse,
+                  addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+                  addRepaintBoundaries: widget.addRepaintBoundaries,
+                  addSemanticIndexes: widget.addSemanticIndexes,
+                  cacheExtent: widget.cacheExtent,
+                  clipBehavior: widget.clipBehavior,
+                  dragStartBehavior: widget.dragStartBehavior,
+                  findChildIndexCallback: widget.findChildIndexCallback,
+                  itemExtent: widget.itemExtent,
+                  itemExtentBuilder: widget.itemExtentBuilder,
+                  keyboardDismissBehavior: widget.keyboardDismissBehavior,
+                  physics: widget.physics,
+                  primary: widget.primary,
+                  prototypeItem: widget.prototypeItem,
+                  restorationId: widget.restorationId,
+                  scrollDirection: widget.scrollDirection,
+                  semanticChildCount: widget.semanticChildCount,
+                  shrinkWrap: widget.shrinkWrap,
+                  itemCount: size,
+                  itemBuilder: (context, index) => viewer.getAt(index).build(
+                      (item) => item == null
+                          ? widget.failed
+                          : (widget.filter?.call(item) ?? true)
+                              ? widget.builder(context, item)
+                              : widget.filtered,
+                      loading: widget.loading))));
 }
 
 int _kDefaultSemanticIndexCallback(Widget _, int localIndex) => localIndex;
@@ -139,9 +147,13 @@ class FireSliverList<T extends ModelCrud> extends StatefulWidget {
   final ChildIndexGetter? findChildIndexCallback;
   final Widget filtered;
   final bool Function(T item)? filter;
+  final int absoluteListThreshold;
+  final PylonBuilder? absoluteBuilder;
 
   const FireSliverList(
       {super.key,
+      this.absoluteListThreshold = 32,
+      this.absoluteBuilder,
       this.filtered = const SliverToBoxAdapter(child: SizedBox.shrink()),
       this.filter,
       required this.viewerBuilder,
@@ -184,23 +196,26 @@ class _FireSliverListState<T extends ModelCrud>
       (viewer) => viewer.getSize().build(
           (size) => size == 0
               ? widget.empty
-              : SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                  (context, index) => viewer.getAt(index).build(
-                      (item) => item == null
-                          ? widget.failed
-                          : (widget.filter?.call(item) ?? true)
-                              ? widget.builder(context, item)
-                              : widget.filtered,
-                      loading: widget.loading),
-                  childCount: size,
-                  addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-                  addRepaintBoundaries: widget.addRepaintBoundaries,
-                  addSemanticIndexes: widget.addSemanticIndexes,
-                  findChildIndexCallback: widget.findChildIndexCallback,
-                  semanticIndexCallback: widget.semanticIndexCallback,
-                  semanticIndexOffset: widget.semanticIndexOffset,
-                )),
+              : size <= widget.absoluteListThreshold &&
+                      widget.absoluteBuilder != null
+                  ? widget.absoluteBuilder!(context)
+                  : SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                      (context, index) => viewer.getAt(index).build(
+                          (item) => item == null
+                              ? widget.failed
+                              : (widget.filter?.call(item) ?? true)
+                                  ? widget.builder(context, item)
+                                  : widget.filtered,
+                          loading: widget.loading),
+                      childCount: size,
+                      addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+                      addRepaintBoundaries: widget.addRepaintBoundaries,
+                      addSemanticIndexes: widget.addSemanticIndexes,
+                      findChildIndexCallback: widget.findChildIndexCallback,
+                      semanticIndexCallback: widget.semanticIndexCallback,
+                      semanticIndexOffset: widget.semanticIndexOffset,
+                    )),
           loading: widget.loading),
       loading: widget.loading);
 }

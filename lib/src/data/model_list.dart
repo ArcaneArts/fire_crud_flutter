@@ -68,6 +68,38 @@ class ModelList<T extends ModelCrud> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => FireList<T>(
+      absoluteBuilder: (context) => AbsoluteModelList<T>(
+            query: query,
+            loading: loading,
+            stream: true,
+            builder: (context) => ListView(
+              shrinkWrap: shrinkWrap,
+              controller: controller,
+              padding: padding,
+              physics: physics,
+              primary: primary,
+              clipBehavior: clipBehavior,
+              addAutomaticKeepAlives: addAutomaticKeepAlives,
+              scrollDirection: scrollDirection,
+              addRepaintBoundaries: addRepaintBoundaries,
+              addSemanticIndexes: addSemanticIndexes,
+              cacheExtent: cacheExtent,
+              dragStartBehavior: dragStartBehavior,
+              itemExtent: itemExtent,
+              itemExtentBuilder: itemExtentBuilder,
+              keyboardDismissBehavior: keyboardDismissBehavior,
+              prototypeItem: prototypeItem,
+              restorationId: restorationId,
+              reverse: reverse,
+              semanticChildCount: semanticChildCount,
+              children: [
+                ...context.pylon<List<T>>().map((e) => Pylon<T>(
+                      value: e,
+                      builder: builder,
+                    ))
+              ],
+            ),
+          ),
       filtered: filtered,
       filter: filter,
       shrinkWrap: shrinkWrap,
@@ -140,6 +172,22 @@ class ModelSliverList<T extends ModelCrud> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => FireSliverList<T>(
+      absoluteBuilder: (context) => AbsoluteModelList<T>(
+            query: query,
+            loading: loading,
+            stream: true,
+            builder: (context) => SliverList(
+              delegate: SliverChildListDelegate(
+                context
+                    .pylon<List<T>>()
+                    .map((e) => Pylon<T>(
+                          value: e,
+                          builder: builder,
+                        ))
+                    .toList(),
+              ),
+            ),
+          ),
       filtered: filtered,
       filter: filter,
       addAutomaticKeepAlives: addAutomaticKeepAlives,

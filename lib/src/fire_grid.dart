@@ -1,6 +1,7 @@
 import 'package:fire_crud/fire_crud.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:pylon/pylon.dart';
 import 'package:toxic_flutter/extensions/future.dart';
 import 'package:toxic_flutter/extensions/stream.dart';
 
@@ -31,9 +32,13 @@ class FireGrid<T extends ModelCrud> extends StatefulWidget {
   final Widget filtered;
   final bool Function(T item)? filter;
   final SliverGridDelegate gridDelegate;
+  final int absoluteListThreshold;
+  final PylonBuilder? absoluteBuilder;
 
   const FireGrid(
       {super.key,
+      this.absoluteListThreshold = 32,
+      this.absoluteBuilder,
       required this.gridDelegate,
       this.filtered = const SizedBox.shrink(),
       this.filter,
@@ -85,33 +90,36 @@ class _FireGridState<T extends ModelCrud> extends State<FireGrid<T>> {
   Widget build(BuildContext context) =>
       viewer.stream.build((viewer) => viewer.getSize().build((size) => size == 0
           ? widget.empty
-          : GridView.builder(
-              gridDelegate: widget.gridDelegate,
-              controller: widget.controller,
-              padding: widget.padding,
-              reverse: widget.reverse,
-              addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-              addRepaintBoundaries: widget.addRepaintBoundaries,
-              addSemanticIndexes: widget.addSemanticIndexes,
-              cacheExtent: widget.cacheExtent,
-              clipBehavior: widget.clipBehavior,
-              dragStartBehavior: widget.dragStartBehavior,
-              findChildIndexCallback: widget.findChildIndexCallback,
-              keyboardDismissBehavior: widget.keyboardDismissBehavior,
-              physics: widget.physics,
-              primary: widget.primary,
-              restorationId: widget.restorationId,
-              scrollDirection: widget.scrollDirection,
-              semanticChildCount: widget.semanticChildCount,
-              shrinkWrap: widget.shrinkWrap,
-              itemCount: size,
-              itemBuilder: (context, index) => viewer.getAt(index).build(
-                  (item) => item == null
-                      ? widget.failed
-                      : (widget.filter?.call(item) ?? true)
-                          ? widget.builder(context, item)
-                          : widget.filtered,
-                  loading: widget.loading))));
+          : widget.absoluteListThreshold < size &&
+                  widget.absoluteBuilder != null
+              ? widget.absoluteBuilder!(context)
+              : GridView.builder(
+                  gridDelegate: widget.gridDelegate,
+                  controller: widget.controller,
+                  padding: widget.padding,
+                  reverse: widget.reverse,
+                  addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+                  addRepaintBoundaries: widget.addRepaintBoundaries,
+                  addSemanticIndexes: widget.addSemanticIndexes,
+                  cacheExtent: widget.cacheExtent,
+                  clipBehavior: widget.clipBehavior,
+                  dragStartBehavior: widget.dragStartBehavior,
+                  findChildIndexCallback: widget.findChildIndexCallback,
+                  keyboardDismissBehavior: widget.keyboardDismissBehavior,
+                  physics: widget.physics,
+                  primary: widget.primary,
+                  restorationId: widget.restorationId,
+                  scrollDirection: widget.scrollDirection,
+                  semanticChildCount: widget.semanticChildCount,
+                  shrinkWrap: widget.shrinkWrap,
+                  itemCount: size,
+                  itemBuilder: (context, index) => viewer.getAt(index).build(
+                      (item) => item == null
+                          ? widget.failed
+                          : (widget.filter?.call(item) ?? true)
+                              ? widget.builder(context, item)
+                              : widget.filtered,
+                      loading: widget.loading))));
 }
 
 int _kDefaultSemanticIndexCallback(Widget _, int localIndex) => localIndex;
@@ -133,9 +141,13 @@ class FireSliverGrid<T extends ModelCrud> extends StatefulWidget {
   final Widget filtered;
   final bool Function(T item)? filter;
   final SliverGridDelegate gridDelegate;
+  final int absoluteListThreshold;
+  final PylonBuilder? absoluteBuilder;
 
   const FireSliverGrid(
       {super.key,
+      this.absoluteListThreshold = 32,
+      this.absoluteBuilder,
       required this.gridDelegate,
       this.filtered = const SliverToBoxAdapter(child: SizedBox.shrink()),
       this.filter,
@@ -179,24 +191,27 @@ class _FireSliverListState<T extends ModelCrud>
       (viewer) => viewer.getSize().build(
           (size) => size == 0
               ? widget.empty
-              : SliverGrid(
-                  gridDelegate: widget.gridDelegate,
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) => viewer.getAt(index).build(
-                        (item) => item == null
-                            ? widget.failed
-                            : (widget.filter?.call(item) ?? true)
-                                ? widget.builder(context, item)
-                                : widget.filtered,
-                        loading: widget.loading),
-                    childCount: size,
-                    addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-                    addRepaintBoundaries: widget.addRepaintBoundaries,
-                    addSemanticIndexes: widget.addSemanticIndexes,
-                    findChildIndexCallback: widget.findChildIndexCallback,
-                    semanticIndexCallback: widget.semanticIndexCallback,
-                    semanticIndexOffset: widget.semanticIndexOffset,
-                  )),
+              : widget.absoluteListThreshold < size &&
+                      widget.absoluteBuilder != null
+                  ? widget.absoluteBuilder!(context)
+                  : SliverGrid(
+                      gridDelegate: widget.gridDelegate,
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) => viewer.getAt(index).build(
+                            (item) => item == null
+                                ? widget.failed
+                                : (widget.filter?.call(item) ?? true)
+                                    ? widget.builder(context, item)
+                                    : widget.filtered,
+                            loading: widget.loading),
+                        childCount: size,
+                        addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+                        addRepaintBoundaries: widget.addRepaintBoundaries,
+                        addSemanticIndexes: widget.addSemanticIndexes,
+                        findChildIndexCallback: widget.findChildIndexCallback,
+                        semanticIndexCallback: widget.semanticIndexCallback,
+                        semanticIndexOffset: widget.semanticIndexOffset,
+                      )),
           loading: widget.loading),
       loading: widget.loading);
 }

@@ -1,5 +1,6 @@
 # 1.2.10
 * Cleanup
+* Experimental use of absolute model lists inside of model lists & grids if the child count is lower than 32 by default.
 
 # 1.2.9
 * Pylon Streams with mutable pylons

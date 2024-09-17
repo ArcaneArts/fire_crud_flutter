@@ -64,6 +64,35 @@ class ModelGrid<T extends ModelCrud> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => FireGrid(
+      absoluteBuilder: (context) => AbsoluteModelList(
+          stream: true,
+          loading: loading,
+          query: query,
+          builder: (context) => GridView(
+                gridDelegate: gridDelegate,
+                semanticChildCount: semanticChildCount,
+                reverse: reverse,
+                restorationId: restorationId,
+                keyboardDismissBehavior: keyboardDismissBehavior,
+                dragStartBehavior: dragStartBehavior,
+                cacheExtent: cacheExtent,
+                addSemanticIndexes: addSemanticIndexes,
+                addRepaintBoundaries: addRepaintBoundaries,
+                scrollDirection: scrollDirection,
+                addAutomaticKeepAlives: addAutomaticKeepAlives,
+                clipBehavior: clipBehavior,
+                primary: primary,
+                physics: physics,
+                padding: padding,
+                controller: controller,
+                shrinkWrap: shrinkWrap,
+                children: [
+                  ...context.pylon<List<T>>().map((e) => Pylon<T>(
+                        value: e,
+                        builder: builder,
+                      ))
+                ],
+              )),
       gridDelegate: gridDelegate,
       loading: loading,
       empty: empty,
@@ -80,7 +109,6 @@ class ModelGrid<T extends ModelCrud> extends StatelessWidget {
       scrollDirection: scrollDirection,
       addAutomaticKeepAlives: addAutomaticKeepAlives,
       clipBehavior: clipBehavior,
-      key: key,
       primary: primary,
       physics: physics,
       padding: padding,
@@ -138,10 +166,22 @@ class ModelSliverGrid<T extends ModelCrud> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => FireSliverGrid<T>(
+      absoluteBuilder: (context) => AbsoluteModelList(
+          stream: true,
+          loading: loading,
+          query: query,
+          builder: (context) => SliverGrid(
+                gridDelegate: gridDelegate,
+                delegate: SliverChildListDelegate([
+                  ...context.pylon<List<T>>().map((e) => Pylon<T>(
+                        value: e,
+                        builder: builder,
+                      ))
+                ]),
+              )),
       gridDelegate: gridDelegate,
       filtered: filtered,
       filter: filter,
-      key: key,
       addAutomaticKeepAlives: addAutomaticKeepAlives,
       addRepaintBoundaries: addRepaintBoundaries,
       addSemanticIndexes: addSemanticIndexes,

@@ -22,6 +22,15 @@ class AbsoluteModelList<T extends ModelCrud> extends StatefulWidget {
     this.query,
   });
 
+  const AbsoluteModelList.sliver({
+    super.key,
+    this.loading = const SliverToBoxAdapter(child: SizedBox.shrink()),
+    this.initialData,
+    this.stream = true,
+    required this.builder,
+    this.query,
+  });
+
   @override
   State<AbsoluteModelList> createState() => _AbsoluteModelListState<T>();
 }
