@@ -1,3 +1,6 @@
+# 1.2.12
+* Sliver Fixes
+
 # 1.2.10
 * Cleanup
 * Experimental use of absolute model lists inside of model lists & grids if the child count is lower than 32 by default.

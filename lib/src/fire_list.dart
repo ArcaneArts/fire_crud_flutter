@@ -167,7 +167,10 @@ class FireSliverList<T extends ModelCrud> extends StatefulWidget {
       this.semanticIndexOffset = 0,
       this.semanticIndexCallback = _kDefaultSemanticIndexCallback,
       this.onViewerInit,
-      this.loading = const ListTile(),
+      this.loading = const SliverToBoxAdapter(
+          child: SizedBox(
+        height: 50,
+      )),
       this.failed = const SliverToBoxAdapter(child: SizedBox.shrink())});
 
   @override
