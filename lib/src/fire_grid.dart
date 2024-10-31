@@ -128,6 +128,7 @@ class FireSliverGrid<T extends ModelCrud> extends StatefulWidget {
   final CollectionViewer<T> Function() viewerBuilder;
   final Widget Function(BuildContext context, T data) builder;
   final Widget loading;
+  final Widget loadingSliver;
   final Widget failed;
   final Widget empty;
   final Function(CollectionViewer<T>)? onViewerInit;
@@ -162,7 +163,8 @@ class FireSliverGrid<T extends ModelCrud> extends StatefulWidget {
       this.semanticIndexOffset = 0,
       this.semanticIndexCallback = _kDefaultSemanticIndexCallback,
       this.onViewerInit,
-      this.loading = const SliverToBoxAdapter(child: SizedBox.shrink()),
+      this.loadingSliver = const SliverToBoxAdapter(child: SizedBox.shrink()),
+      this.loading = const SizedBox.shrink(),
       this.failed = const SliverToBoxAdapter(child: SizedBox.shrink())});
 
   @override
@@ -212,6 +214,6 @@ class _FireSliverListState<T extends ModelCrud>
                         semanticIndexCallback: widget.semanticIndexCallback,
                         semanticIndexOffset: widget.semanticIndexOffset,
                       )),
-          loading: widget.loading),
-      loading: widget.loading);
+          loading: widget.loadingSliver),
+      loading: widget.loadingSliver);
 }

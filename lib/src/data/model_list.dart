@@ -138,6 +138,7 @@ int _kDefaultSemanticIndexCallback(Widget _, int localIndex) => localIndex;
 class ModelSliverList<T extends ModelCrud> extends StatelessWidget {
   final PylonBuilder builder;
   final Widget loading;
+  final Widget loadingSliver;
   final Widget failed;
   final Widget empty;
   final Function(CollectionViewer<T>)? onViewerInit;
@@ -167,14 +168,15 @@ class ModelSliverList<T extends ModelCrud> extends StatelessWidget {
       this.semanticIndexOffset = 0,
       this.semanticIndexCallback = _kDefaultSemanticIndexCallback,
       this.onViewerInit,
-      this.loading = const ListTile(),
+      this.loading = const SizedBox.shrink(),
+      this.loadingSliver = const SliverToBoxAdapter(child: SizedBox.shrink()),
       this.failed = const SliverToBoxAdapter(child: SizedBox.shrink())});
 
   @override
   Widget build(BuildContext context) => FireSliverList<T>(
       absoluteBuilder: (context) => AbsoluteModelList<T>(
             query: query,
-            loading: loading,
+            loading: loadingSliver,
             stream: true,
             builder: (context) => SliverList(
               delegate: SliverChildListDelegate(
@@ -192,6 +194,7 @@ class ModelSliverList<T extends ModelCrud> extends StatelessWidget {
       filter: filter,
       addAutomaticKeepAlives: addAutomaticKeepAlives,
       loading: loading,
+      loadingSliver: loadingSliver,
       addRepaintBoundaries: addRepaintBoundaries,
       addSemanticIndexes: addSemanticIndexes,
       empty: empty,

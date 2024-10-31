@@ -130,6 +130,7 @@ class ModelSliverGrid<T extends ModelCrud> extends StatelessWidget {
   final PylonBuilder builder;
   final DataQuery? query;
   final Widget loading;
+  final Widget loadingSliver;
   final Widget failed;
   final Widget empty;
   final Function(CollectionViewer<T>)? onViewerInit;
@@ -151,6 +152,7 @@ class ModelSliverGrid<T extends ModelCrud> extends StatelessWidget {
       this.filtered = const SliverToBoxAdapter(child: SizedBox.shrink()),
       this.filter,
       this.query,
+      this.loadingSliver = const SliverToBoxAdapter(child: SizedBox.shrink()),
       required this.builder,
       this.empty = const SliverToBoxAdapter(child: SizedBox.shrink()),
       this.addAutomaticKeepAlives = true,
@@ -168,7 +170,7 @@ class ModelSliverGrid<T extends ModelCrud> extends StatelessWidget {
   Widget build(BuildContext context) => FireSliverGrid<T>(
       absoluteBuilder: (context) => AbsoluteModelList(
           stream: true,
-          loading: loading,
+          loading: loadingSliver,
           query: query,
           builder: (context) => SliverGrid(
                 gridDelegate: gridDelegate,
@@ -190,6 +192,7 @@ class ModelSliverGrid<T extends ModelCrud> extends StatelessWidget {
       semanticChildCount: semanticChildCount,
       empty: empty,
       loading: loading,
+      loadingSliver: loadingSliver,
       semanticIndexOffset: semanticIndexOffset,
       semanticIndexCallback: semanticIndexCallback,
       onViewerInit: onViewerInit,

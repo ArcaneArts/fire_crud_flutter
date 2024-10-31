@@ -1,3 +1,6 @@
+# 1.2.13
+* Loading Sliver fixes 
+
 # 1.2.12
 * Sliver Fixes
 
