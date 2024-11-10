@@ -164,7 +164,7 @@ class ModelSliverGrid<T extends ModelCrud> extends StatelessWidget {
       this.semanticIndexCallback = _kDefaultSemanticIndexCallback,
       this.onViewerInit,
       this.loading = const SizedBox.shrink(),
-      this.failed = const SliverToBoxAdapter(child: SizedBox.shrink())});
+      this.failed = const SizedBox.shrink()});
 
   @override
   Widget build(BuildContext context) => FireSliverGrid<T>(

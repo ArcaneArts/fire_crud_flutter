@@ -170,7 +170,7 @@ class FireSliverList<T extends ModelCrud> extends StatefulWidget {
       this.onViewerInit,
       this.loadingSliver = const SliverToBoxAdapter(child: SizedBox.shrink()),
       this.loading = const SizedBox.shrink(),
-      this.failed = const SliverToBoxAdapter(child: SizedBox.shrink())});
+      this.failed = const SizedBox.shrink()});
 
   @override
   State<FireSliverList<T>> createState() => _FireSliverListState();

@@ -1,3 +1,6 @@
+# 1.2.14
+* Fix failed builder on sliver versions of fireLists, fireGrids, modelGrids, and modelLists to not build as a sliver.
+
 # 1.2.13
 * Loading Sliver fixes 
 
