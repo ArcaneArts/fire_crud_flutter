@@ -18,60 +18,68 @@ extension XModelAccessor on ModelAccessor {
 
   Widget pylon<T extends ModelCrud>(BuildContext context, String id,
           Widget Function(BuildContext context) builder,
-          {Widget? loading}) =>
+          {Widget? loading, bool local = false}) =>
       build<T>(
           id,
           (v) => Pylon<T>(
                 key: ValueKey("p.${v.documentPath}.pylon"),
                 value: v,
+                local: local,
                 builder: builder,
               ),
           loading: Pylon<T?>(
             value: null,
+            local: local,
             builder: (context) => loading ?? const SizedBox.shrink(),
           ));
 
   Widget pylonUnique<T extends ModelCrud>(
           BuildContext context, Widget Function(BuildContext context) builder,
-          {Widget? loading}) =>
+          {Widget? loading, bool local = false}) =>
       buildUnique<T>(
           (v) => Pylon<T>(
+                local: local,
                 key: ValueKey("pu.${v.documentPath}.pylon"),
                 value: v,
                 builder: builder,
               ),
           loading: Pylon<T?>(
+            local: local,
             value: null,
             builder: (context) => loading ?? const SizedBox.shrink(),
           ));
 
   Widget pylonStream<T extends ModelCrud>(BuildContext context, String id,
           Widget Function(BuildContext context) builder,
-          {Widget? loading}) =>
+          {Widget? loading, bool local = false}) =>
       buildStream<T>(
           id,
           (v) => Pylon<T>(
+                local: local,
                 key: ValueKey("ps.${v.documentPath}.pylon"),
                 value: v,
                 builder: builder,
               ),
           loading: Pylon<T?>(
             value: null,
+            local: local,
             builder: (context) => loading ?? const SizedBox.shrink(),
           ));
 
   Widget pylonMutableStream<T extends ModelCrud>(BuildContext context,
           String id, Widget Function(BuildContext context) builder,
-          {Widget? loading, bool rebuildChildren = true}) =>
+          {Widget? loading, bool rebuildChildren = true, bool local = false}) =>
       buildStream<T>(
           id,
           (v) => MutablePylon<T>(
+                local: local,
                 rebuildChildren: rebuildChildren,
                 key: ValueKey("ps.${v.documentPath}.pylon"),
                 value: v,
                 builder: builder,
               ),
           loading: MutablePylon<T?>(
+            local: local,
             rebuildChildren: rebuildChildren,
             value: null,
             builder: (context) => loading ?? const SizedBox.shrink(),
@@ -79,29 +87,33 @@ extension XModelAccessor on ModelAccessor {
 
   Widget pylonStreamUnique<T extends ModelCrud>(
           BuildContext context, Widget Function(BuildContext context) builder,
-          {Widget? loading}) =>
+          {Widget? loading, bool local = false}) =>
       buildStreamUnique<T>(
           (v) => Pylon<T>(
+                local: local,
                 key: ValueKey("psu.${v.documentPath}.pylon"),
                 value: v,
                 builder: builder,
               ),
           loading: Pylon<T?>(
             value: null,
+            local: local,
             builder: (context) => loading ?? const SizedBox.shrink(),
           ));
 
   Widget pylonMutableStreamUnique<T extends ModelCrud>(
           BuildContext context, Widget Function(BuildContext context) builder,
-          {Widget? loading, bool rebuildChildren = true}) =>
+          {Widget? loading, bool rebuildChildren = true, bool local = false}) =>
       buildStreamUnique<T>(
           (v) => MutablePylon<T>(
+                local: local,
                 key: ValueKey("psu.${v.documentPath}.pylon"),
                 value: v,
                 rebuildChildren: rebuildChildren,
                 builder: builder,
               ),
           loading: MutablePylon<T?>(
+            local: local,
             value: null,
             rebuildChildren: rebuildChildren,
             builder: (context) => loading ?? const SizedBox.shrink(),
@@ -109,9 +121,10 @@ extension XModelAccessor on ModelAccessor {
 
   Widget pylonStreamSelf<T extends ModelCrud>(
           BuildContext context, Widget Function(BuildContext context) builder,
-          {Widget? loading}) =>
+          {Widget? loading, bool local = false}) =>
       buildSelfStream<T>(
           (v) => Pylon<T>(
+                local: local,
                 key: ValueKey("pss.${v.documentPath}.pylon"),
                 value: v,
                 builder: builder,
@@ -120,11 +133,12 @@ extension XModelAccessor on ModelAccessor {
 
   Widget pylonMutableStreamSelf<T extends ModelCrud>(
           BuildContext context, Widget Function(BuildContext context) builder,
-          {Widget? loading, bool rebuildChildren = true}) =>
+          {Widget? loading, bool rebuildChildren = true, bool local = false}) =>
       buildSelfStream<T>(
           (v) => MutablePylon<T>(
                 key: ValueKey("pss.${v.documentPath}.pylon"),
                 value: v,
+                local: local,
                 rebuildChildren: rebuildChildren,
                 builder: builder,
               ),
@@ -134,10 +148,12 @@ extension XModelAccessor on ModelAccessor {
           {required BuildContext context,
           required Widget Function(BuildContext context) builder,
           CollectionReference Function(CollectionReference ref)? query,
-          Widget? loading}) =>
+          Widget? loading,
+          bool local = false}) =>
       listView<T>(
           context: context,
           builder: (context, data) => Pylon<T>(
+                local: local,
                 value: data,
                 builder: builder,
               ),
@@ -148,11 +164,13 @@ extension XModelAccessor on ModelAccessor {
           required Widget Function(BuildContext context) builder,
           required SliverGridDelegate delegate,
           CollectionReference Function(CollectionReference ref)? query,
-          Widget? loading}) =>
+          Widget? loading,
+          bool local = false}) =>
       gridView<T>(
           context: context,
           builder: (context, data) => Pylon<T>(
                 value: data,
+                local: local,
                 builder: builder,
               ),
           delegate: delegate,
@@ -198,7 +216,10 @@ extension XModelAccessor on ModelAccessor {
           {required BuildContext context,
           required Widget Function(BuildContext context, T data) builder,
           CollectionReference Function(CollectionReference ref)? query}) =>
-      FireList(viewerBuilder: () => view<T>(query), builder: builder);
+      FireList(
+        viewerBuilder: () => view<T>(query),
+        builder: builder,
+      );
 
   /// Shorthand grid view for a collection of models. If you need to control the grid properties like shrinkwrap
   /// then actually use [FireGrid] implementation which needs a collection view. Call .view<Type> instead of .gridView<Type> for that.
