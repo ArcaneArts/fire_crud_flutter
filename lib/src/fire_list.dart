@@ -40,7 +40,7 @@ class FireList<T extends ModelCrud> extends StatefulWidget {
 
   const FireList(
       {super.key,
-      this.absoluteListThreshold = 32,
+      this.absoluteListThreshold = 100,
       this.absoluteBuilder,
       this.filtered = const SizedBox.shrink(),
       this.filter,
@@ -68,8 +68,8 @@ class FireList<T extends ModelCrud> extends StatefulWidget {
       this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
       this.controller,
       this.onViewerInit,
-      this.loading = const ListTile(),
-      this.failed = const SizedBox.shrink()});
+      this.loading = const SizedBox(height: 250),
+      this.failed = const SizedBox(height: 250)});
 
   @override
   State<FireList<T>> createState() => _FireListState<T>();
@@ -120,13 +120,20 @@ class _FireListState<T extends ModelCrud> extends State<FireList<T>> {
                   semanticChildCount: widget.semanticChildCount,
                   shrinkWrap: widget.shrinkWrap,
                   itemCount: size,
-                  itemBuilder: (context, index) => viewer.getAt(index).build(
-                      (item) => item == null
-                          ? widget.failed
-                          : (widget.filter?.call(item) ?? true)
-                              ? widget.builder(context, item)
-                              : widget.filtered,
-                      loading: widget.loading))));
+                  itemBuilder: (context, index) => FutureBuilder<T?>(
+                        future: viewer.getAt(index),
+                        builder: (context, snap) {
+                          if (snap.hasData) {
+                            return snap.data == null
+                                ? widget.failed
+                                : (widget.filter?.call(snap.data as T) ?? true)
+                                    ? widget.builder(context, snap.data as T)
+                                    : widget.filtered;
+                          }
+
+                          return widget.loading;
+                        },
+                      ))));
 }
 
 int _kDefaultSemanticIndexCallback(Widget _, int localIndex) => localIndex;
@@ -153,7 +160,7 @@ class FireSliverList<T extends ModelCrud> extends StatefulWidget {
 
   const FireSliverList(
       {super.key,
-      this.absoluteListThreshold = 32,
+      this.absoluteListThreshold = 100,
       this.absoluteBuilder,
       this.filtered = const SliverToBoxAdapter(child: SizedBox.shrink()),
       this.filter,
@@ -169,8 +176,8 @@ class FireSliverList<T extends ModelCrud> extends StatefulWidget {
       this.semanticIndexCallback = _kDefaultSemanticIndexCallback,
       this.onViewerInit,
       this.loadingSliver = const SliverToBoxAdapter(child: SizedBox.shrink()),
-      this.loading = const SizedBox.shrink(),
-      this.failed = const SizedBox.shrink()});
+      this.loading = const SizedBox(height: 250),
+      this.failed = const SizedBox(height: 250)});
 
   @override
   State<FireSliverList<T>> createState() => _FireSliverListState();
@@ -203,13 +210,20 @@ class _FireSliverListState<T extends ModelCrud>
                   ? widget.absoluteBuilder!(context)
                   : SliverList(
                       delegate: SliverChildBuilderDelegate(
-                      (context, index) => viewer.getAt(index).build(
-                          (item) => item == null
-                              ? widget.failed
-                              : (widget.filter?.call(item) ?? true)
-                                  ? widget.builder(context, item)
-                                  : widget.filtered,
-                          loading: widget.loading),
+                      (context, index) => FutureBuilder<T?>(
+                        future: viewer.getAt(index),
+                        builder: (context, snap) {
+                          if (snap.hasData) {
+                            return snap.data == null
+                                ? widget.failed
+                                : (widget.filter?.call(snap.data as T) ?? true)
+                                    ? widget.builder(context, snap.data as T)
+                                    : widget.filtered;
+                          }
+
+                          return widget.loading;
+                        },
+                      ),
                       childCount: size,
                       addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
                       addRepaintBoundaries: widget.addRepaintBoundaries,

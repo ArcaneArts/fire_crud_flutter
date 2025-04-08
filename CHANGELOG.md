@@ -1,3 +1,9 @@
+# 1.2.17
+* Fixes for FireLists, ModelLists
+
+# 1.2.16
+* Update api constraint
+
 # 1.2.15
 * Add locals to pylon flags
 
