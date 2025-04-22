@@ -9,7 +9,7 @@ import 'package:toxic_flutter/extensions/stream.dart';
 extension XModelAccessor on ModelAccessor {
   Widget editor<T extends ModelCrud>(
           String id, Widget Function(T model, ValueChanged<T> push) builder) =>
-      get<T>(id).then((v) => v ?? model<T>(id)).build(
+      $get<T>(id).then((v) => v ?? $model<T>(id)).build(
           (v) => ModelEditor<T>(parent: this, model: v, builder: builder));
 
   Widget restreamPylon<T extends ModelCrud>(
@@ -179,7 +179,7 @@ extension XModelAccessor on ModelAccessor {
   Widget build<T extends ModelCrud>(String id, Widget Function(T t) builder,
           {Widget loading = const SizedBox.shrink()}) =>
       FutureOnce<T?>(
-          futureFactory: () => get<T>(id),
+          futureFactory: () => $get<T>(id),
           builder: (t) => t != null ? builder(t) : loading);
 
   Widget buildStream<T extends ModelCrud>(
@@ -187,7 +187,7 @@ extension XModelAccessor on ModelAccessor {
           {Widget loading = const SizedBox.shrink()}) =>
       StreamOnce<T?>(
           loading: loading,
-          streamFactory: () => stream<T>(id),
+          streamFactory: () => $stream<T>(id),
           builder: (t) => t != null ? builder(t) : loading);
 
   Widget buildUnique<T extends ModelCrud>(Widget Function(T t) builder,

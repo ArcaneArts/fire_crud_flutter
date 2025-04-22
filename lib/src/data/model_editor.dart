@@ -51,7 +51,7 @@ class _ModelEditorState<T extends ModelCrud> extends State<ModelEditor<T>> {
       if (widget.unique) {
         widget.parent.setUnique<T>(model);
       } else {
-        widget.parent.set<T>(model.documentId!, model);
+        widget.parent.$set<T>(model.documentId!, model);
       }
     }, cooldown: const Duration(seconds: 1), leaky: true);
   }

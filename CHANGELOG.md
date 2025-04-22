@@ -1,3 +1,6 @@
+# 1.3.1
+* Support fire_crud 3.1.1
+
 # 1.3.0
 * Support fire_crud 3
 
