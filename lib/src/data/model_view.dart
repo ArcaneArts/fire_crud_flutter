@@ -41,13 +41,13 @@ class _ModelViewState<T extends ModelCrud> extends State<ModelView<T>> {
     _value = widget.initialData ?? context.pylonOr<T>();
 
     if (widget.stream) {
-      _subscription = t!.streamSelf<T>().listen((event) {
+      _subscription = t!.streamSelfRaw<T>().listen((event) {
         setState(() {
           _value = event;
         });
       });
     } else {
-      _future = t!.getSelf<T>().then((i) {
+      _future = t!.getSelfRaw<T>().then((i) {
         if (i != null) {
           setState(() {
             _value = i;

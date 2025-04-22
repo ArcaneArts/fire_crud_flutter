@@ -207,7 +207,7 @@ extension XModelAccessor on ModelAccessor {
           {Widget loading = const SizedBox.shrink()}) =>
       StreamOnce<T?>(
           loading: loading,
-          streamFactory: () => streamSelf<T>(),
+          streamFactory: () => streamSelfRaw<T>(),
           builder: (t) => t != null ? builder(t) : loading);
 
   /// Shorthand listview for a collection of models. If you need to control the list properties like shrinkwrap

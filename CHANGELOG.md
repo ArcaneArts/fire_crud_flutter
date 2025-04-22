@@ -1,3 +1,6 @@
+# 1.3.0
+* Support fire_crud 3
+
 # 1.2.17
 * Fixes for FireLists, ModelLists
 
