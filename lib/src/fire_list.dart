@@ -1,4 +1,5 @@
 import 'package:fire_crud/fire_crud.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -77,6 +78,10 @@ class FireList<T extends ModelCrud> extends StatefulWidget {
 
 class _FireListState<T extends ModelCrud> extends State<FireList<T>> {
   late CollectionViewer<T> viewer;
+  final Map<int, Future<T?>> _futureCache = {};
+  Future<T?> _getAtCached(int index) {
+    return _futureCache.putIfAbsent(index, () => viewer.getAt(index));
+  }
 
   @override
   void initState() {
@@ -93,47 +98,60 @@ class _FireListState<T extends ModelCrud> extends State<FireList<T>> {
 
   @override
   Widget build(BuildContext context) =>
-      viewer.stream.build((viewer) => viewer.getSize().build((size) => size == 0
-          ? widget.empty
-          : size <= widget.absoluteListThreshold &&
-                  widget.absoluteBuilder != null
-              ? widget.absoluteBuilder!(context)
-              : ListView.builder(
-                  controller: widget.controller,
-                  padding: widget.padding,
-                  reverse: widget.reverse,
-                  addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-                  addRepaintBoundaries: widget.addRepaintBoundaries,
-                  addSemanticIndexes: widget.addSemanticIndexes,
-                  cacheExtent: widget.cacheExtent,
-                  clipBehavior: widget.clipBehavior,
-                  dragStartBehavior: widget.dragStartBehavior,
-                  findChildIndexCallback: widget.findChildIndexCallback,
-                  itemExtent: widget.itemExtent,
-                  itemExtentBuilder: widget.itemExtentBuilder,
-                  keyboardDismissBehavior: widget.keyboardDismissBehavior,
-                  physics: widget.physics,
-                  primary: widget.primary,
-                  prototypeItem: widget.prototypeItem,
-                  restorationId: widget.restorationId,
-                  scrollDirection: widget.scrollDirection,
-                  semanticChildCount: widget.semanticChildCount,
-                  shrinkWrap: widget.shrinkWrap,
-                  itemCount: size,
-                  itemBuilder: (context, index) => FutureBuilder<T?>(
-                        future: viewer.getAt(index),
-                        builder: (context, snap) {
-                          if (snap.hasData) {
-                            return snap.data == null
-                                ? widget.failed
-                                : (widget.filter?.call(snap.data as T) ?? true)
-                                    ? widget.builder(context, snap.data as T)
-                                    : widget.filtered;
-                          }
+      viewer.stream.build((viewer) => viewer.getSize().build((size) {
+            if (size > 0 && _futureCache.length > size * 2) {
+              _futureCache.clear();
+            }
 
-                          return widget.loading;
-                        },
-                      ))));
+            return size == 0
+                ? widget.empty
+                : size <= widget.absoluteListThreshold &&
+                        widget.absoluteBuilder != null
+                    ? widget.absoluteBuilder!(context)
+                    : ListView.builder(
+                        controller: widget.controller,
+                        padding: widget.padding,
+                        reverse: widget.reverse,
+                        addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+                        addRepaintBoundaries: widget.addRepaintBoundaries,
+                        addSemanticIndexes: widget.addSemanticIndexes,
+                        cacheExtent: widget.cacheExtent,
+                        clipBehavior: widget.clipBehavior,
+                        dragStartBehavior: widget.dragStartBehavior,
+                        findChildIndexCallback: widget.findChildIndexCallback,
+                        itemExtent: widget.itemExtent,
+                        itemExtentBuilder: widget.itemExtentBuilder,
+                        keyboardDismissBehavior: widget.keyboardDismissBehavior,
+                        physics: widget.physics,
+                        primary: widget.primary,
+                        prototypeItem: widget.prototypeItem,
+                        restorationId: widget.restorationId,
+                        scrollDirection: widget.scrollDirection,
+                        semanticChildCount: widget.semanticChildCount,
+                        shrinkWrap: widget.shrinkWrap,
+                        itemCount: size,
+                        itemBuilder: (context, index) => FutureBuilder<T?>(
+                              future: _getAtCached(index),
+                              builder: (context, snap) {
+                                if (kDebugMode && snap.hasError) {
+                                  print(snap.error);
+                                  print(snap.stackTrace);
+                                }
+
+                                if (snap.hasData) {
+                                  return snap.data == null
+                                      ? widget.failed
+                                      : (widget.filter?.call(snap.data as T) ??
+                                              true)
+                                          ? widget.builder(
+                                              context, snap.data as T)
+                                          : widget.filtered;
+                                }
+
+                                return widget.loading;
+                              },
+                            ));
+          }));
 }
 
 int _kDefaultSemanticIndexCallback(Widget _, int localIndex) => localIndex;
@@ -186,6 +204,10 @@ class FireSliverList<T extends ModelCrud> extends StatefulWidget {
 class _FireSliverListState<T extends ModelCrud>
     extends State<FireSliverList<T>> {
   late CollectionViewer<T> viewer;
+  final Map<int, Future<T?>> _futureCache = {};
+  Future<T?> _getAtCached(int index) {
+    return _futureCache.putIfAbsent(index, () => viewer.getAt(index));
+  }
 
   @override
   void initState() {
@@ -202,36 +224,46 @@ class _FireSliverListState<T extends ModelCrud>
 
   @override
   Widget build(BuildContext context) => viewer.stream.build(
-      (viewer) => viewer.getSize().build(
-          (size) => size == 0
-              ? widget.empty
-              : size <= widget.absoluteListThreshold &&
-                      widget.absoluteBuilder != null
-                  ? widget.absoluteBuilder!(context)
-                  : SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                      (context, index) => FutureBuilder<T?>(
-                        future: viewer.getAt(index),
-                        builder: (context, snap) {
-                          if (snap.hasData) {
-                            return snap.data == null
-                                ? widget.failed
-                                : (widget.filter?.call(snap.data as T) ?? true)
-                                    ? widget.builder(context, snap.data as T)
-                                    : widget.filtered;
-                          }
+      (viewer) => viewer.getSize().build((size) {
+            if (size > 0 && _futureCache.length > size * 2) {
+              _futureCache.clear();
+            }
 
-                          return widget.loading;
-                        },
-                      ),
-                      childCount: size,
-                      addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-                      addRepaintBoundaries: widget.addRepaintBoundaries,
-                      addSemanticIndexes: widget.addSemanticIndexes,
-                      findChildIndexCallback: widget.findChildIndexCallback,
-                      semanticIndexCallback: widget.semanticIndexCallback,
-                      semanticIndexOffset: widget.semanticIndexOffset,
-                    )),
-          loading: widget.loadingSliver),
+            return size == 0
+                ? widget.empty
+                : size <= widget.absoluteListThreshold &&
+                        widget.absoluteBuilder != null
+                    ? widget.absoluteBuilder!(context)
+                    : SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                        (context, index) => FutureBuilder<T?>(
+                          future: _getAtCached(index),
+                          builder: (context, snap) {
+                            if (kDebugMode && snap.hasError) {
+                              print(snap.error);
+                              print(snap.stackTrace);
+                            }
+
+                            if (snap.hasData) {
+                              return snap.data == null
+                                  ? widget.failed
+                                  : (widget.filter?.call(snap.data as T) ??
+                                          true)
+                                      ? widget.builder(context, snap.data as T)
+                                      : widget.filtered;
+                            }
+
+                            return widget.loading;
+                          },
+                        ),
+                        childCount: size,
+                        addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+                        addRepaintBoundaries: widget.addRepaintBoundaries,
+                        addSemanticIndexes: widget.addSemanticIndexes,
+                        findChildIndexCallback: widget.findChildIndexCallback,
+                        semanticIndexCallback: widget.semanticIndexCallback,
+                        semanticIndexOffset: widget.semanticIndexOffset,
+                      ));
+          }, loading: widget.loadingSliver),
       loading: widget.loadingSliver);
 }

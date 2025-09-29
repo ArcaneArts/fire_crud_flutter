@@ -1,3 +1,6 @@
+# 1.3.3
+* Dramatically improved list views
+
 # 1.3.1
 * Support fire_crud 3.1.1
 

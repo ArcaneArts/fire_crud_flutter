@@ -72,6 +72,10 @@ class FireGrid<T extends ModelCrud> extends StatefulWidget {
 
 class _FireGridState<T extends ModelCrud> extends State<FireGrid<T>> {
   late CollectionViewer<T> viewer;
+  final Map<int, Future<T?>> _futureCache = {};
+  Future<T?> _getAtCached(int index) {
+    return _futureCache.putIfAbsent(index, () => viewer.getAt(index));
+  }
 
   @override
   void initState() {
@@ -88,38 +92,45 @@ class _FireGridState<T extends ModelCrud> extends State<FireGrid<T>> {
 
   @override
   Widget build(BuildContext context) =>
-      viewer.stream.build((viewer) => viewer.getSize().build((size) => size == 0
-          ? widget.empty
-          : widget.absoluteListThreshold < size &&
-                  widget.absoluteBuilder != null
-              ? widget.absoluteBuilder!(context)
-              : GridView.builder(
-                  gridDelegate: widget.gridDelegate,
-                  controller: widget.controller,
-                  padding: widget.padding,
-                  reverse: widget.reverse,
-                  addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-                  addRepaintBoundaries: widget.addRepaintBoundaries,
-                  addSemanticIndexes: widget.addSemanticIndexes,
-                  cacheExtent: widget.cacheExtent,
-                  clipBehavior: widget.clipBehavior,
-                  dragStartBehavior: widget.dragStartBehavior,
-                  findChildIndexCallback: widget.findChildIndexCallback,
-                  keyboardDismissBehavior: widget.keyboardDismissBehavior,
-                  physics: widget.physics,
-                  primary: widget.primary,
-                  restorationId: widget.restorationId,
-                  scrollDirection: widget.scrollDirection,
-                  semanticChildCount: widget.semanticChildCount,
-                  shrinkWrap: widget.shrinkWrap,
-                  itemCount: size,
-                  itemBuilder: (context, index) => viewer.getAt(index).build(
-                      (item) => item == null
-                          ? widget.failed
-                          : (widget.filter?.call(item) ?? true)
-                              ? widget.builder(context, item)
-                              : widget.filtered,
-                      loading: widget.loading))));
+      viewer.stream.build((viewer) => viewer.getSize().build((size) {
+            if (size > 0 && _futureCache.length > size * 2) {
+              _futureCache.clear();
+            }
+
+            return size == 0
+                ? widget.empty
+                : widget.absoluteListThreshold < size &&
+                        widget.absoluteBuilder != null
+                    ? widget.absoluteBuilder!(context)
+                    : GridView.builder(
+                        gridDelegate: widget.gridDelegate,
+                        controller: widget.controller,
+                        padding: widget.padding,
+                        reverse: widget.reverse,
+                        addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+                        addRepaintBoundaries: widget.addRepaintBoundaries,
+                        addSemanticIndexes: widget.addSemanticIndexes,
+                        cacheExtent: widget.cacheExtent,
+                        clipBehavior: widget.clipBehavior,
+                        dragStartBehavior: widget.dragStartBehavior,
+                        findChildIndexCallback: widget.findChildIndexCallback,
+                        keyboardDismissBehavior: widget.keyboardDismissBehavior,
+                        physics: widget.physics,
+                        primary: widget.primary,
+                        restorationId: widget.restorationId,
+                        scrollDirection: widget.scrollDirection,
+                        semanticChildCount: widget.semanticChildCount,
+                        shrinkWrap: widget.shrinkWrap,
+                        itemCount: size,
+                        itemBuilder: (context, index) =>
+                            _getAtCached(index).build(
+                                (item) => item == null
+                                    ? widget.failed
+                                    : (widget.filter?.call(item) ?? true)
+                                        ? widget.builder(context, item)
+                                        : widget.filtered,
+                                loading: widget.loading));
+          }));
 }
 
 int _kDefaultSemanticIndexCallback(Widget _, int localIndex) => localIndex;
@@ -174,6 +185,10 @@ class FireSliverGrid<T extends ModelCrud> extends StatefulWidget {
 class _FireSliverListState<T extends ModelCrud>
     extends State<FireSliverGrid<T>> {
   late CollectionViewer<T> viewer;
+  final Map<int, Future<T?>> _futureCache = {};
+  Future<T?> _getAtCached(int index) {
+    return _futureCache.putIfAbsent(index, () => viewer.getAt(index));
+  }
 
   @override
   void initState() {
@@ -190,30 +205,34 @@ class _FireSliverListState<T extends ModelCrud>
 
   @override
   Widget build(BuildContext context) => viewer.stream.build(
-      (viewer) => viewer.getSize().build(
-          (size) => size == 0
-              ? widget.empty
-              : widget.absoluteListThreshold < size &&
-                      widget.absoluteBuilder != null
-                  ? widget.absoluteBuilder!(context)
-                  : SliverGrid(
-                      gridDelegate: widget.gridDelegate,
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) => viewer.getAt(index).build(
-                            (item) => item == null
-                                ? widget.failed
-                                : (widget.filter?.call(item) ?? true)
-                                    ? widget.builder(context, item)
-                                    : widget.filtered,
-                            loading: widget.loading),
-                        childCount: size,
-                        addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-                        addRepaintBoundaries: widget.addRepaintBoundaries,
-                        addSemanticIndexes: widget.addSemanticIndexes,
-                        findChildIndexCallback: widget.findChildIndexCallback,
-                        semanticIndexCallback: widget.semanticIndexCallback,
-                        semanticIndexOffset: widget.semanticIndexOffset,
-                      )),
-          loading: widget.loadingSliver),
+      (viewer) => viewer.getSize().build((size) {
+            if (size > 0 && _futureCache.length > size * 2) {
+              _futureCache.clear();
+            }
+
+            return size == 0
+                ? widget.empty
+                : widget.absoluteListThreshold < size &&
+                        widget.absoluteBuilder != null
+                    ? widget.absoluteBuilder!(context)
+                    : SliverGrid(
+                        gridDelegate: widget.gridDelegate,
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) => _getAtCached(index).build(
+                              (item) => item == null
+                                  ? widget.failed
+                                  : (widget.filter?.call(item) ?? true)
+                                      ? widget.builder(context, item)
+                                      : widget.filtered,
+                              loading: widget.loading),
+                          childCount: size,
+                          addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+                          addRepaintBoundaries: widget.addRepaintBoundaries,
+                          addSemanticIndexes: widget.addSemanticIndexes,
+                          findChildIndexCallback: widget.findChildIndexCallback,
+                          semanticIndexCallback: widget.semanticIndexCallback,
+                          semanticIndexOffset: widget.semanticIndexOffset,
+                        ));
+          }, loading: widget.loadingSliver),
       loading: widget.loadingSliver);
 }

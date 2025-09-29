@@ -29,7 +29,6 @@ class ModelView<T extends ModelCrud> extends StatefulWidget {
 
 class _ModelViewState<T extends ModelCrud> extends State<ModelView<T>> {
   late StreamSubscription<T>? _subscription;
-  late Future<T?> _future;
   late T? _value;
 
   @override
@@ -47,7 +46,7 @@ class _ModelViewState<T extends ModelCrud> extends State<ModelView<T>> {
         });
       });
     } else {
-      _future = t!.getSelfRaw<T>().then((i) {
+      t!.getSelfRaw<T>().then((i) {
         if (i != null) {
           setState(() {
             _value = i;

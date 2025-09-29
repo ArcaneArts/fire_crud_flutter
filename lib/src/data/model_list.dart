@@ -1,8 +1,8 @@
 import 'package:fire_crud/fire_crud.dart';
 import 'package:fire_crud_flutter/fire_crud_flutter.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:pylon/pylon.dart';
 
 class ModelList<T extends ModelCrud> extends StatelessWidget {
@@ -63,7 +63,7 @@ class ModelList<T extends ModelCrud> extends StatelessWidget {
       this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
       this.controller,
       this.onViewerInit,
-      this.loading = const ListTile(),
+      this.loading = const SizedBox.shrink(),
       this.failed = const SizedBox.shrink()});
 
   @override
@@ -169,7 +169,7 @@ class ModelSliverList<T extends ModelCrud> extends StatelessWidget {
       this.semanticIndexCallback = _kDefaultSemanticIndexCallback,
       this.onViewerInit,
       this.loading = const SizedBox.shrink(),
-      this.loadingSliver = const SliverToBoxAdapter(child: SizedBox.shrink()),
+      this.loadingSliver = const SliverToBoxAdapter(),
       this.failed = const SizedBox.shrink()});
 
   @override
